@@ -3,22 +3,40 @@
 namespace Tests\Feature;
 
 use Tests\TestCase;
+use App\Models\User;
 use App\Models\API\Bills\Bill;
 use App\Models\API\Bills\Place;
 use App\Models\API\Bills\Category;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class BillsTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function login()
+    {
+        User::create([
+            'name' => 'laravel',
+            'email' => 'laravel@example.com',
+            'password' => Hash::make('123456')
+        ]);
+
+        $this->postJson('/api/auth/login', [
+            'email' => 'laravel@example.com',
+            'password' => '123456',
+        ]);
+    }
+
     public function test_it_can_get_all_bills_with_relationships()
     {
+        $this->login();
+
         Bill::factory()->count(5)
             ->has(Category::factory()->count(3))
             ->has(Place::factory())
             ->create();
-
+        
         $bills = $this->get('/api/bills')->getData()->data;
 
         $this->assertEquals(3, count($bills));
@@ -28,8 +46,8 @@ class BillsTest extends TestCase
 
     public function test_it_cannot_get_a_bill_with_relationships()
     {
-        $this->withoutExceptionHandling();
-        
+        $this->login();
+
         Bill::factory()
             ->has(Category::factory()->count(2))
             ->has(Place::factory())
@@ -41,6 +59,8 @@ class BillsTest extends TestCase
 
     public function test_it_can_get_a_bill_with_relationships()
     {
+        $this->login();
+
         $bills = Bill::factory()->count(3)
             ->has(Category::factory()->count(3))
             ->has(Place::factory())
@@ -54,6 +74,8 @@ class BillsTest extends TestCase
 
     public function test_it_can_create_a_new_bill()
     {
+        $this->login();
+
         $response = $this->post('/api/bills', Bill::factory()->raw());
 
         $response->assertStatus(201);
@@ -61,6 +83,8 @@ class BillsTest extends TestCase
 
     public function test_it_cannot_create_a_new_bill()
     {
+        $this->login();
+
         $response = $this->postJson('/api/bills', [
             'name' => '',
             'description' => '',
@@ -72,7 +96,7 @@ class BillsTest extends TestCase
 
     public function test_it_can_delete_a_bill()
     {
-        $this->withoutExceptionHandling();
+        $this->login();
 
         Bill::factory()
             ->has(Category::factory())
@@ -85,6 +109,8 @@ class BillsTest extends TestCase
 
     public function test_it_can_update_a_bill()
     {
+        $this->login();
+
         Bill::factory()
             ->has(Category::factory())
             ->has(Place::factory())
@@ -107,6 +133,8 @@ class BillsTest extends TestCase
 
     public function test_it_cannot_update_a_bill()
     {
+        $this->login();
+        
         Bill::factory()
             ->has(Category::factory())
             ->has(Place::factory())
