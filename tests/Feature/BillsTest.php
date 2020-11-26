@@ -35,7 +35,7 @@ class BillsTest extends TestCase
         Bill::factory()->count(5)
             ->has(Category::factory()->count(3))
             ->has(Place::factory())
-            ->create();
+            ->create(['user_id' => auth()->user()->id]);
         
         $bills = $this->get('/api/bills')->getData()->data;
 
@@ -44,32 +44,58 @@ class BillsTest extends TestCase
         $this->assertEquals(1, count($bills[0]->places));
     }
 
-    public function test_it_cannot_get_a_bill_with_relationships()
+    public function test_it_can_only_get_bills_with_relationships_it_owns()
+    {
+        $this->login();
+
+        Bill::factory()->count(3)->create(['user_id' => auth()->user()->id]);
+
+        Bill::factory()->count(5)
+            ->has(Category::factory()->count(3))
+            ->has(Place::factory())
+            ->create();
+        
+        $bills = $this->get('/api/bills')->getData()->data;
+
+        $this->assertEquals(3, count($bills));
+    }
+
+    public function test_it_cannot_get_a_inexistent_bill()
     {
         $this->login();
 
         Bill::factory()
             ->has(Category::factory()->count(2))
             ->has(Place::factory())
-            ->create();
+            ->create(['user_id' => auth()->user()->id]);
 
         $this->getJson('/api/bills/6')
-            ->assertNotFound();
+            ->assertForbidden();
     }
 
-    public function test_it_can_get_a_bill_with_relationships()
+    public function test_it_can_get_a_bill()
     {
+        $this->withoutExceptionHandling();
         $this->login();
 
         $bills = Bill::factory()->count(3)
-            ->has(Category::factory()->count(3))
-            ->has(Place::factory())
-            ->create();
+            ->create(['user_id' => auth()->user()->id]);
+
+        $response = $this->getJson('/api/bills/1');
+        $response->assertOk();
+
+        $this->assertEquals($bills[0]['name'], $response->getData()->name);
+    }
+
+    public function test_it_cannot_get_a_bill_it_do_not_owns()
+    {
+        $this->login();
+
+        Bill::factory()->create(['user_id' => auth()->user()->id]);
+        Bill::factory()->create();
 
         $response = $this->getJson('/api/bills/2');
-
-        $response->assertOk();
-        $this->assertEquals($bills[1]['name'], $response->getData()->name);
+        $response->assertForbidden();
     }
 
     public function test_it_can_create_a_new_bill()
@@ -81,7 +107,7 @@ class BillsTest extends TestCase
         $response->assertStatus(201);
     }
 
-    public function test_it_cannot_create_a_new_bill()
+    public function test_it_cannot_create_a_bill_with_invalid_information()
     {
         $this->login();
 
@@ -101,10 +127,23 @@ class BillsTest extends TestCase
         Bill::factory()
             ->has(Category::factory())
             ->has(Place::factory())
-            ->create();
+            ->create(['user_id' => 1]);
 
         $this->deleteJson('/api/bills/1')
             ->assertStatus(201);
+    }
+
+    public function test_it_cannot_delete_a_bill_it_not_owns()
+    {
+        $this->login();
+
+        Bill::factory()
+            ->has(Category::factory())
+            ->has(Place::factory())
+            ->create();
+
+        $this->deleteJson('/api/bills/1')
+            ->assertStatus(403);
     }
 
     public function test_it_can_update_a_bill()
@@ -114,7 +153,7 @@ class BillsTest extends TestCase
         Bill::factory()
             ->has(Category::factory())
             ->has(Place::factory())
-            ->create();
+            ->create(['user_id' => auth()->user()->id]);
 
         $response = $this->putJson('/api/bills/1', [
             'name' => 'laravel',
@@ -131,7 +170,7 @@ class BillsTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_it_cannot_update_a_bill()
+    public function test_it_cannot_update_a_bill_that_it_not_owns()
     {
         $this->login();
         
@@ -141,11 +180,11 @@ class BillsTest extends TestCase
             ->create();
 
         $response = $this->putJson('/api/bills/1', [
-            'name' => '',
+            'name' => 'a',
             'description' => 'lorem ipsum dolor sit laravel',
-            'value' => 'a',
+            'value' => 3,
         ]);
         
-        $response->assertStatus(422);
+        $response->assertStatus(403);
     }
 }

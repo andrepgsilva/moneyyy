@@ -2,6 +2,7 @@
 
 namespace App\Models\API\Bills;
 
+use App\Models\User;
 use App\Models\API\Bills\Place;
 use App\Models\API\Bills\Category;
 use Illuminate\Database\Eloquent\Model;
@@ -12,10 +13,16 @@ class Bill extends Model
     use HasFactory;
 
     protected $fillable = [
+        'user_id',
         'name',
         'description',
         'value'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function categories()
     {

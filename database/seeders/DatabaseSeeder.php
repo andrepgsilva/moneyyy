@@ -2,11 +2,13 @@
 
 namespace Database\Seeders;
 
+use App\Models\User;
 use Illuminate\Support\Str;
 use App\Models\API\Bills\Bill;
 use App\Models\API\Bills\Place;
 use Illuminate\Database\Seeder;
 use App\Models\API\Bills\Category;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -17,6 +19,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+        User::create([
+            'name' => 'Laravel',
+            'email' => 'laravel@example.com',
+            'password' => Hash::make('123456')
+        ]);
+
         /* Categories */
         $entertainmentCategory = Category::create([
             'name' => 'Entertainment',
@@ -51,6 +59,7 @@ class DatabaseSeeder extends Seeder
         /* Bills */
         
         $firstBill = Bill::create([
+            'user_id' => 1,
             'name' => 'Spotify',
             'description' => 'I need to listen some music...',
             'value' => 7500,
@@ -60,6 +69,7 @@ class DatabaseSeeder extends Seeder
         $firstBill->places()->attach($websitePlace->id);
 
         $secondBill = Bill::create([
+            'user_id' => 1,
             'name' => 'Big Mac',
             'description' => 'Mac Donalds Sandwich',
             'value' => 5500,
@@ -69,6 +79,7 @@ class DatabaseSeeder extends Seeder
         $secondBill->places()->attach($macDonalds->id);
 
         $thirdBill = Bill::create([
+            'user_id' => 1,
             'name' => 'Clean Code',
             'description' => 'Tech book',
             'value' => 45000,

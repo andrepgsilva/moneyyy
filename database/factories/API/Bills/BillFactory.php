@@ -2,6 +2,7 @@
 
 namespace Database\Factories\API\Bills;
 
+use App\Models\User;
 use App\Models\API\Bills\Bill;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -25,6 +26,7 @@ class BillFactory extends Factory
     public function definition()
     {
         return [
+            'user_id' => User::factory()->create()->id,
             'name' => $this->faker->name(),
             'description' => $this->faker->sentence(),
             'value' => $this->faker->numberBetween(10000, 90000),

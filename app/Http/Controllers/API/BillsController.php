@@ -16,7 +16,7 @@ class BillsController extends Controller
      */
     public function index()
     {
-        return Bill::with(['categories:id,name,slug', 'places:id,name'])->paginate(3);
+        return auth()->user()->bills()->paginate(3);
     }
 
     /**
@@ -25,7 +25,7 @@ class BillsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, BillRepository $billRepository)
     {
         $formValidated = $request->validate([
             'name' => 'required|max:255',
@@ -33,7 +33,7 @@ class BillsController extends Controller
             'value' => 'required|integer|gt:0'
         ]);
 
-        Bill::create($formValidated);
+        $billRepository->store($formValidated);
 
         return response()->json(['message' => 'Bill successfully created'], 201);
     }
@@ -46,11 +46,9 @@ class BillsController extends Controller
      */
     public function show($id, BillRepository $billRepository)
     {
-        try {
-            $bill = $billRepository->show($id);
-        } catch(\Exception $e) {
-            return response()->json(['error' => 'Bill not found'], 404);    
-        }
+        $bill = $billRepository->show($id);
+
+        $this->authorize('view', $bill);
 
         return response()->json($bill);
     }
@@ -64,17 +62,15 @@ class BillsController extends Controller
      */
     public function update($id, Request $request, BillRepository $billRepository)
     {
+        $bill = $billRepository->show($id);
+
         $formValidated = $request->validate([
             'name' => 'required||max:255|sometimes',
             'description' => 'required|max:255|sometimes',
             'value' => 'required|integer|gt:0|sometimes'
         ]);
 
-        try {
-            $bill = $billRepository->show($id);
-        } catch(\Exception $e) {
-            return response()->json(['error' => 'Bill not found'], 404);
-        }
+        $this->authorize('view', $bill);
 
         /**
         * @var Bill $bill 
@@ -92,11 +88,9 @@ class BillsController extends Controller
      */
     public function destroy($id, BillRepository $billRepository)
     {
-        try {
-            $bill = $billRepository->show($id);
-        } catch(\Exception $e) {
-            return response()->json(['error' => 'Bill not found'], 404);
-        }
+        $bill = $billRepository->show($id);
+
+        $this->authorize('view', $bill);
 
         try {
             /**

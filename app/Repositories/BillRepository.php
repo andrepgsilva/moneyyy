@@ -15,11 +15,13 @@ class BillRepository implements BillRepositoryInterface
      * 
      * @return App\Models\API\Bills\Bill
      * 
-     * @throws \Throwable
      **/
     public function show($id)
     {
-        return Bill::with(['categories:id,name,slug', 'places:id,name'])->findOrFail($id);
+        $user = auth()->user();
+        $scope = ['categories:id,name,slug', 'places:id,name'];
+
+        return $user->bills()->with($scope)->where('bills.id', $id)->first();
     }
 
     /**
@@ -31,7 +33,7 @@ class BillRepository implements BillRepositoryInterface
      **/
     public function store(array $billInformation)
     {
-        return Bill::create($billInformation);
+        return auth()->user()->bills()->create($billInformation);
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\API\Bills\Bill;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -40,6 +41,11 @@ class User extends Authenticatable implements JWTSubject
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function bills()
+    {
+        return $this->hasMany(Bill::class)->with(['categories:id,name,slug', 'places:id,name']);
+    }
 
      /**
      * Get the identifier that will be stored in the subject claim of the JWT.
