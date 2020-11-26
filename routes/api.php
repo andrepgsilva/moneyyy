@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\BillsController;
 use App\Http\Controllers\API\VerifyEmailController;
 
 /*
@@ -25,3 +26,10 @@ Route::group(['prefix' => 'auth'], function () {
 });
 
 Route::post('/email-exists', [VerifyEmailController::class, 'index']);
+
+// Put routes on middleware
+Route::get('/bills', [BillsController::class, 'index']);
+Route::post('/bills', [BillsController::class, 'store']);
+Route::get('/bills/{id}', [BillsController::class, 'show']);
+Route::delete('/bills/{id}', [BillsController::class, 'destroy']);
+Route::put('/bills/{id}', [BillsController::class, 'update']);
