@@ -22,14 +22,14 @@ Route::post('/email-exists', [VerifyEmailController::class, 'index']);
 Route::group(['prefix' => 'auth'], function () {
     Route::post('register', [AuthController::class, 'register']);
     Route::post('login', [AuthController::class, 'login']);
+    Route::post('logout', [AuthController::class, 'logout'])->middleware('auth.api');
+    Route::post('refresh-token', [AuthController::class, 'refreshToken']);
     
-    Route::post('refresh', [AuthController::class, 'refresh'])->middleware('validateJwtToken');
-    
-    Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:api');
+    Route::post('me', [AuthController::class, 'me'])->middleware('auth.api');
 });
 
 // Bills routes
-Route::group(['middleware' => 'auth:api'], function() {
+Route::group(['middleware' => 'auth.api'], function() {
     Route::get('/bills', [BillsController::class, 'index']);
     Route::post('/bills', [BillsController::class, 'store']);
     Route::get('/bills/{id}', [BillsController::class, 'show']);

@@ -5,9 +5,17 @@ namespace App\Http\Controllers\API;
 use App\Models\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use App\Utils\AuthorizationRequestHandle;
 
 class AuthController extends Controller
 {
+    protected $authorizationRequest;
+
+    public function __construct()
+    {
+        $this->authorizationRequest = new AuthorizationRequestHandle();
+    }
+
     /**
      * Create a new user
      *
@@ -38,20 +46,22 @@ class AuthController extends Controller
     public function login()
     {
         $credentials = request()->validate([
-            'email' => 'required|email|exists:users',
+            'email' => 'required|email',
             'password' => 'required'
         ]);
 
-        if (!$token = auth()->attempt($credentials)) {
+        $user = User::where('email', $credentials['email'])->first();
+
+        if (Hash::check($user->password, $credentials['password'])) {
             return response()->json(['error' => 'Sorry, your password was incorrect.'], 401);
         }
 
-        $user = auth()->user();
-
-        return $this->respondWithToken($token, [
-            'name' => $user->name,
-            'email' => $user->email,
+        $this->authorizationRequest->addTokensToClient([
+            'username' => $credentials['email'],
+            'password' => $credentials['password'],
         ]);
+
+        return response()->json(['email' => $credentials['email']]);
     }
 
     /**
@@ -61,35 +71,29 @@ class AuthController extends Controller
      */
     public function logout()
     {
-        auth()->logout();
+        $token = request()->user()->token();
+        $token->delete();
 
-        return $this->respondWithToken('', ['message' => 'Successfully logged out.']);
+        cookie()->queue(cookie()->forget('access_token'));
+        cookie()->queue(cookie()->forget('refresh_token'));
+
+        return response()->json((['message' => 'Successfully logged out.']));
     }
 
     /**
-     * Refresh a token.
+     * Refresh user token
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function refresh()
+    public function refreshToken()
     {
-        $token = auth()->parseToken()->refresh();
+        $this->authorizationRequest->refreshToken();
 
-        return $this->respondWithToken($token, ['message' => 'Token refreshed.']);
+        return response()->json(['message' => 'Token refreshed successfully.']);
     }
 
-    /**
-     * Get the token array structure.
-     *
-     * @param  string $token
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    protected function respondWithToken($token, $message = '')
+    public function me()
     {
-        return response()
-            ->json($message)
-            // auth()->factory()->getTTL() * 60
-            ->withCookie(cookie('token', $token, 1));
+        return response()->json(auth()->user());
     }
 }

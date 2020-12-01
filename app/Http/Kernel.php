@@ -6,6 +6,11 @@ use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
 {
+    protected $middlewarePriority = [
+        \App\Http\Middleware\API\AddTokenToAuthHeader::class,
+        \Illuminate\Auth\Middleware\Authenticate::class,
+    ];
+    
     /**
      * The application's global HTTP middleware stack.
      *
@@ -42,6 +47,15 @@ class Kernel extends HttpKernel
         'api' => [
             'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+        ],
+
+        'auth.api' => [
+            \App\Http\Middleware\API\AddTokenToAuthHeader::class,
+            'throttle:60,1',
+            // 'bindings',
+            'auth:api',
+            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
         ],
     ];
 
@@ -62,6 +76,5 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        'validateJwtToken' => \App\Http\Middleware\API\ValidateJwtToken::class,
     ];
 }
