@@ -56,10 +56,14 @@ class AuthController extends Controller
             return response()->json(['error' => 'Sorry, your password was incorrect.'], 401);
         }
 
-        $this->authorizationRequest->addTokensToClient([
+        $wasTokenAddedToClient = $this->authorizationRequest->addTokensToClient([
             'username' => $credentials['email'],
             'password' => $credentials['password'],
         ]);
+
+        if (! $wasTokenAddedToClient) {
+            return response()->json(['error' => 'Invalid token.'], 401);
+        }
 
         return response()->json(['email' => $credentials['email']]);
     }
@@ -87,7 +91,9 @@ class AuthController extends Controller
      */
     public function refreshToken()
     {
-        $this->authorizationRequest->refreshToken();
+        if (! $this->authorizationRequest->refreshToken()) {
+            return response()->json(['error' => 'Refresh token is expired'], 401);
+        }
 
         return response()->json(['message' => 'Token refreshed successfully.']);
     }

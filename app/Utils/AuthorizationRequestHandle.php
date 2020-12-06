@@ -26,19 +26,23 @@ class AuthorizationRequestHandle
         
         $responseBody = json_decode(app()->handle($tokenRequest)->getContent());
         
+        $areBothTokensValid = isset($responseBody->access_token) && isset($responseBody->refresh_token); 
+        
+        if (! $areBothTokensValid) return false;
+
         $accessToken = $responseBody->access_token;
         $refreshToken = $responseBody->refresh_token;
 
         Cookie::queue(Cookie::make('access_token', $accessToken, 1));
-        Cookie::queue(Cookie::make('refresh_token', $refreshToken, 3600 * 24 * 14));
+        Cookie::queue(Cookie::make('refresh_token', $refreshToken, 60 * 24 * 14));
+
+        return $areBothTokensValid;
     }
 
     public function refreshToken()
     {
-        $refreshToken = request()->cookie('refresh_token');
-
-        if (! $refreshToken) {
-            return response()->json(['message' => 'Refresh token is expired']);
+        if (! $refreshToken = request()->cookie('refresh_token')) {
+            return false;
         }
 
         $paramsToRequestRefresh = [
