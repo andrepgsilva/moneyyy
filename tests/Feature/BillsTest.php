@@ -19,7 +19,7 @@ class BillsTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         Passport::actingAs(User::create([
             'name' => 'laravel',
             'email' => 'laravel@example.com',
@@ -30,12 +30,12 @@ class BillsTest extends TestCase
     public function test_it_can_get_all_bills_with_relationships()
     {
         $this->withoutMiddleware(AddTokenToAuthHeader::class);
-        
+
         Bill::factory()->count(5)
             ->has(Category::factory()->count(3))
             ->has(Place::factory())
             ->create(['user_id' => 1]);
-        
+
         $bills = $this->getJson('/api/bills')->getData()->data;
 
         $this->assertEquals(3, count($bills));
@@ -53,7 +53,7 @@ class BillsTest extends TestCase
             ->has(Category::factory()->count(3))
             ->has(Place::factory())
             ->create();
-        
+
         $bills = $this->get('/api/bills')->getData()->data;
 
         $this->assertEquals(3, count($bills));
@@ -161,18 +161,18 @@ class BillsTest extends TestCase
         ]);
 
         $firstBill = Bill::first();
-        
+
         $this->assertEquals($firstBill->name, 'laravel');
         $this->assertEquals($firstBill->description, 'lorem ipsum dolor sit laravel');
         $this->assertEquals($firstBill->value, 33333);
-        
+
         $response->assertStatus(200);
     }
 
     public function test_it_cannot_update_a_bill_that_it_not_owns()
     {
         $this->withoutMiddleware(AddTokenToAuthHeader::class);;
-        
+
         Bill::factory()
             ->has(Category::factory())
             ->has(Place::factory())
@@ -183,7 +183,7 @@ class BillsTest extends TestCase
             'description' => 'lorem ipsum dolor sit laravel',
             'value' => 3,
         ]);
-        
+
         $response->assertStatus(403);
     }
 }

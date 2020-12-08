@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Repositories\BillRepository;
 use Illuminate\Support\ServiceProvider;
+use App\Repositories\Interfaces\BillRepositoryInterface;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,6 +25,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        $this->app->bind(
+            BillRepositoryInterface::class, 
+            BillRepository::class
+        );
     }
 }

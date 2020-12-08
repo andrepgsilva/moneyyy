@@ -9,6 +9,21 @@ use App\Repositories\Interfaces\BillRepositoryInterface;
 class BillRepository implements BillRepositoryInterface
 {
     /**
+     * Get all bills
+     *
+     * @return Illuminate\Database\Eloquent\Collection
+     * 
+     **/
+    public function index()
+    {
+        $user = auth()->user();
+
+        return $user->bills()
+                ->latest()
+                ->select(['bills.id', 'bills.name', 'bills.description', 'bills.created_at']);
+    }
+
+    /**
      * Get a bill
      *
      * @param Integer $id Bill identification

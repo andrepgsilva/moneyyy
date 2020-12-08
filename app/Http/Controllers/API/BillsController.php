@@ -5,10 +5,17 @@ namespace App\Http\Controllers\API;
 use Illuminate\Http\Request;
 use App\Models\API\Bills\Bill;
 use App\Http\Controllers\Controller;
-use App\Repositories\BillRepository;
+use App\Repositories\Interfaces\BillRepositoryInterface;
 
 class BillsController extends Controller
 {
+    protected $billRepository;
+
+    public function __construct(BillRepositoryInterface $billRepository)
+    {
+        $this->billRepository = $billRepository; 
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -16,7 +23,7 @@ class BillsController extends Controller
      */
     public function index()
     {
-        return auth()->user()->bills()->paginate(3);
+        return $this->billRepository->index()->paginate(3);
     }
 
     /**
@@ -25,7 +32,7 @@ class BillsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, BillRepository $billRepository)
+    public function store(Request $request)
     {
         $formValidated = $request->validate([
             'name' => 'required|max:255',
@@ -33,7 +40,7 @@ class BillsController extends Controller
             'value' => 'required|integer|gt:0'
         ]);
 
-        $billRepository->store($formValidated);
+        $this->billRepository->store($formValidated);
 
         return response()->json(['message' => 'Bill successfully created'], 201);
     }
@@ -44,9 +51,9 @@ class BillsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id, BillRepository $billRepository)
+    public function show($id)
     {
-        $bill = $billRepository->show($id);
+        $bill = $this->billRepository->show($id);
 
         $this->authorize('view', $bill);
 
@@ -60,9 +67,9 @@ class BillsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update($id, Request $request, BillRepository $billRepository)
+    public function update($id, Request $request)
     {
-        $bill = $billRepository->show($id);
+        $bill = $this->billRepository->show($id);
 
         $formValidated = $request->validate([
             'name' => 'required||max:255|sometimes',
@@ -75,7 +82,7 @@ class BillsController extends Controller
         /**
         * @var Bill $bill 
         */
-        $billRepository->update($bill, $formValidated);
+        $this->billRepository->update($bill, $formValidated);
 
         return response()->json(['message' => 'Bill updated successfully'], 200);
     }
@@ -86,9 +93,9 @@ class BillsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id, BillRepository $billRepository)
+    public function destroy($id)
     {
-        $bill = $billRepository->show($id);
+        $bill = $this->billRepository->show($id);
 
         $this->authorize('view', $bill);
 
@@ -96,7 +103,7 @@ class BillsController extends Controller
             /**
             * @var Bill $bill 
             */
-            $billRepository->destroy($bill);
+            $this->billRepository->destroy($bill);
         } catch(\Exception $e) {
             return response()->json(['error' => 'Internal Server Error'], 500);
         }
