@@ -33,8 +33,8 @@ class AuthorizationRequestHandle
         $accessToken = $responseBody->access_token;
         $refreshToken = $responseBody->refresh_token;
 
-        Cookie::queue(Cookie::make('access_token', $accessToken, 1));
-        Cookie::queue(Cookie::make('refresh_token', $refreshToken, 60 * 24 * 14));
+        Cookie::queue(Cookie::make('access_token', $accessToken, config('jwt.ttl_token') ?? 5));
+        Cookie::queue(Cookie::make('refresh_token', $refreshToken, config('jwt.refresh_token') ?? 20160));
 
         return $areBothTokensValid;
     }
