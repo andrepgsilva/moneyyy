@@ -23,7 +23,7 @@ class BillsController extends Controller
      */
     public function index()
     {
-        return $this->billRepository->index()->paginate(3);
+        return $this->billRepository->index()->paginate(10);
     }
 
     /**

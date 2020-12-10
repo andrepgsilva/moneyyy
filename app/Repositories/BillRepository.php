@@ -18,9 +18,21 @@ class BillRepository implements BillRepositoryInterface
     {
         $user = auth()->user();
 
+        $billsScope = [
+            'bills.id', 
+            'bills.name', 
+            'bills.description',
+            'bills.value',
+            'bills.created_at',
+        ];
+
         return $user->bills()
+                ->with(['categories:id,name', 'places:id,name'])
                 ->latest()
-                ->select(['bills.id', 'bills.name', 'bills.description', 'bills.created_at']);
+                ->select(...$billsScope)
+                ->withCasts([
+                    'created_at' => 'datetime:d/m/Y H:i'
+                ]);
     }
 
     /**
