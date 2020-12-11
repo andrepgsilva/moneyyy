@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddTimezoneToUsersTable extends Migration
+class AddTimezoneColumnToUsersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,14 @@ class AddTimezoneToUsersTable extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('timezone')->after('remember_token')->nullable();
+        $driver = Schema::connection($this->getConnection())->getConnection()->getDriverName();
+
+        Schema::table('users', function (Blueprint $table) use ($driver) {
+            if ('sqlite' === $driver) {
+                $table->string('timezone')->nullable()->default('');
+            } else {
+                $table->string('timezone')->after('remember_token');
+            }
         });
     }
 
