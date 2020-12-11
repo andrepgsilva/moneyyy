@@ -31,7 +31,7 @@ class BillsTest extends TestCase
     {
         $this->withoutMiddleware(AddTokenToAuthHeader::class);
 
-        Bill::factory()->count(5)
+        Bill::factory()->count(3)
             ->has(Category::factory()->count(3))
             ->has(Place::factory())
             ->create(['user_id' => 1]);

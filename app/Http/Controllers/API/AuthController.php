@@ -26,13 +26,15 @@ class AuthController extends Controller
         $credentials = request()->validate([
             'name' => 'required|max:255',
             'email' => 'required|email|unique:users',
-            'password' => 'required|confirmed|min:6'
+            'password' => 'required|confirmed|min:6',
+            'timezone' => 'required|max:255',
         ]);
 
         User::create([
             'name' => $credentials['name'],
             'email' => $credentials['email'],
             'password' => Hash::make($credentials['password']),
+            'timezone' => $credentials['timezone'],
         ]);
 
         return response()->json(['message' => 'User successfully created.'], 201);

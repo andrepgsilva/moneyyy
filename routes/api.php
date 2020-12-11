@@ -20,7 +20,7 @@ Route::post('/email-exists', [VerifyEmailController::class, 'index']);
 
 // Authentication routes
 Route::group(['prefix' => 'auth'], function () {
-    Route::post('register', [AuthController::class, 'register']);
+    Route::post('register', [AuthController::class, 'register'])->name('user.register');
     Route::post('login', [AuthController::class, 'login']);
     Route::post('logout', [AuthController::class, 'logout'])->middleware('auth.api');
     Route::post('refresh-token', [AuthController::class, 'refreshToken']);
