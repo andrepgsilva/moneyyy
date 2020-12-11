@@ -37,7 +37,8 @@ class BillsController extends Controller
         $formValidated = $request->validate([
             'name' => 'required|max:255',
             'description' => 'required|max:255',
-            'value' => 'required|integer|gt:0'
+            'value' => 'required|integer|gt:0',
+            'issue_date' => 'required|date',
         ]);
 
         $this->billRepository->store($formValidated);
@@ -74,7 +75,8 @@ class BillsController extends Controller
         $formValidated = $request->validate([
             'name' => 'required||max:255|sometimes',
             'description' => 'required|max:255|sometimes',
-            'value' => 'required|integer|gt:0|sometimes'
+            'value' => 'required|integer|gt:0|sometimes',
+            'issue_date' => 'required|date|sometimes'
         ]);
 
         $this->authorize('view', $bill);

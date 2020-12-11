@@ -61,7 +61,7 @@ class BillsTest extends TestCase
 
     public function test_it_cannot_get_a_inexistent_bill()
     {
-        $this->withoutMiddleware(AddTokenToAuthHeader::class);;
+        $this->withoutMiddleware(AddTokenToAuthHeader::class);
 
         Bill::factory()
             ->has(Category::factory()->count(2))
@@ -75,7 +75,7 @@ class BillsTest extends TestCase
     public function test_it_can_get_a_bill()
     {
         $this->withoutExceptionHandling();
-        $this->withoutMiddleware(AddTokenToAuthHeader::class);;
+        $this->withoutMiddleware(AddTokenToAuthHeader::class);
 
         $bills = Bill::factory()->count(3)
             ->create(['user_id' => auth()->user()->id]);
@@ -88,7 +88,7 @@ class BillsTest extends TestCase
 
     public function test_it_cannot_get_a_bill_it_do_not_owns()
     {
-        $this->withoutMiddleware(AddTokenToAuthHeader::class);;
+        $this->withoutMiddleware(AddTokenToAuthHeader::class);
 
         Bill::factory()->create(['user_id' => auth()->user()->id]);
         Bill::factory()->create();
@@ -99,7 +99,7 @@ class BillsTest extends TestCase
 
     public function test_it_can_create_a_new_bill()
     {
-        $this->withoutMiddleware(AddTokenToAuthHeader::class);;
+        $this->withoutMiddleware(AddTokenToAuthHeader::class);
 
         $response = $this->post('/api/bills', Bill::factory()->raw());
 
@@ -108,7 +108,7 @@ class BillsTest extends TestCase
 
     public function test_it_cannot_create_a_bill_with_invalid_information()
     {
-        $this->withoutMiddleware(AddTokenToAuthHeader::class);;
+        $this->withoutMiddleware(AddTokenToAuthHeader::class);
 
         $response = $this->postJson('/api/bills', [
             'name' => '',
@@ -121,7 +121,7 @@ class BillsTest extends TestCase
 
     public function test_it_can_delete_a_bill()
     {
-        $this->withoutMiddleware(AddTokenToAuthHeader::class);;
+        $this->withoutMiddleware(AddTokenToAuthHeader::class);
 
         Bill::factory()
             ->has(Category::factory())
@@ -134,7 +134,7 @@ class BillsTest extends TestCase
 
     public function test_it_cannot_delete_a_bill_it_not_owns()
     {
-        $this->withoutMiddleware(AddTokenToAuthHeader::class);;
+        $this->withoutMiddleware(AddTokenToAuthHeader::class);
 
         Bill::factory()
             ->has(Category::factory())
@@ -147,7 +147,7 @@ class BillsTest extends TestCase
 
     public function test_it_can_update_a_bill()
     {
-        $this->withoutMiddleware(AddTokenToAuthHeader::class);;
+        $this->withoutMiddleware(AddTokenToAuthHeader::class);
 
         Bill::factory()
             ->has(Category::factory())
@@ -158,6 +158,7 @@ class BillsTest extends TestCase
             'name' => 'laravel',
             'description' => 'lorem ipsum dolor sit laravel',
             'value' => 33333,
+            'issue_date' => now(),
         ]);
 
         $firstBill = Bill::first();
@@ -171,7 +172,7 @@ class BillsTest extends TestCase
 
     public function test_it_cannot_update_a_bill_that_it_not_owns()
     {
-        $this->withoutMiddleware(AddTokenToAuthHeader::class);;
+        $this->withoutMiddleware(AddTokenToAuthHeader::class);
 
         Bill::factory()
             ->has(Category::factory())
