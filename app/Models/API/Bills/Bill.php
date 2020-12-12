@@ -16,6 +16,7 @@ class Bill extends Model
         'name',
         'description',
         'value',
+        'place',
         'issue_date',
     ];
 

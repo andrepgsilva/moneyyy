@@ -46,6 +46,11 @@ class DatabaseSeeder extends Seeder
             'slug' => Str::of('Health')->slug('-'),
         ]);
 
+        $otherCategory = Category::create([
+            'name' => 'Other',
+            'slug' => Str::of('Other')->slug('-'),
+        ]);
+
 
         /* Bills */        
         $firstBill = Bill::create([
@@ -73,6 +78,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Clean Code',
             'description' => 'Tech book',
             'value' => 45000,
+            'place' => 'Fnac',
             'issue_date' => now(),
         ]);
 

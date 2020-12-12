@@ -10,6 +10,8 @@ class Category extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['name', 'slug']; 
+
     public function bills()
     {
         return $this->belongsToMany(Bill::class);

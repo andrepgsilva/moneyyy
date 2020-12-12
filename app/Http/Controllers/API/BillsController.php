@@ -39,9 +39,12 @@ class BillsController extends Controller
             'description' => 'max:255',
             'value' => 'required|integer|gt:0',
             'issue_date' => 'required|date',
+            'category_id' => 'required|integer',
         ]);
-
-        $this->billRepository->store($formValidated);
+        
+        if (! $this->billRepository->store($formValidated)) {
+            return response()->json(['error' => 'Internal Server Error'], 500);
+        }
 
         return response()->json(['message' => 'Bill successfully created'], 201);
     }
@@ -76,7 +79,8 @@ class BillsController extends Controller
             'name' => 'required||max:255|sometimes',
             'description' => 'required|max:255|sometimes',
             'value' => 'required|integer|gt:0|sometimes',
-            'issue_date' => 'required|date|sometimes'
+            'issue_date' => 'required|date|sometimes',
+            'category_id' => 'required|integer',
         ]);
 
         $this->authorize('view', $bill);
@@ -84,7 +88,9 @@ class BillsController extends Controller
         /**
         * @var Bill $bill 
         */
-        $this->billRepository->update($bill, $formValidated);
+        if (! $this->billRepository->update($bill, $formValidated)) {
+            return response()->json(['error' => 'Internal Server Error'], 500);
+        }
 
         return response()->json(['message' => 'Bill updated successfully'], 200);
     }

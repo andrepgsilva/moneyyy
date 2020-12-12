@@ -97,8 +97,15 @@ class BillsTest extends TestCase
     {
         $this->withoutMiddleware(AddTokenToAuthHeader::class);
 
-        $response = $this->post('/api/bills', Bill::factory()->raw());
+        $category = Category::create([
+            'name' => 'laravel',
+            'slug' => 'lara',
+        ]);
 
+        $billInformation = Bill::factory()->raw();
+        $billInformation['category_id'] = $category->id;
+
+        $response = $this->postJson('/api/bills', $billInformation);
         $response->assertStatus(201);
     }
 
@@ -151,7 +158,8 @@ class BillsTest extends TestCase
             'name' => 'laravel',
             'description' => 'lorem ipsum dolor sit laravel',
             'value' => 33333,
-            'issue_date' => now(),
+            'issue_date' => now()->format('Y-m-d h:i:s'),
+            'category_id' => Category::create(['name' => 'laravel', 'slug' => 'lara'])->id
         ]);
 
         $firstBill = Bill::first();
@@ -175,6 +183,7 @@ class BillsTest extends TestCase
             'name' => 'a',
             'description' => 'lorem ipsum dolor sit laravel',
             'value' => 3,
+            'category_id' => Category::create(['name' => 'laravel', 'slug' => 'lara'])->id
         ]);
 
         $response->assertStatus(403);

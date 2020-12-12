@@ -30,7 +30,8 @@ class BillFactory extends Factory
             'name' => $this->faker->name(),
             'description' => $this->faker->sentence(),
             'value' => $this->faker->numberBetween(10000, 90000),
-            'issue_date' => $this->faker->dateTime(),
+            'place' => $this->faker->name,
+            'issue_date' => $this->faker->dateTime()->format('Y-m-d h:i:s'),
         ];
     }
 }

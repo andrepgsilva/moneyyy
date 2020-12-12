@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\API\Bills\Bill;
+use App\Models\API\Bills\Category;
 use Illuminate\Support\Facades\DB;
 use App\Repositories\Interfaces\BillRepositoryInterface;
 
@@ -56,11 +57,19 @@ class BillRepository implements BillRepositoryInterface
      *
      * @param Array $billInformation (name, description, value)
      * 
-     * @return App\Models\API\Bills\Bill
+     * @return Boolean|App\Models\API\Bills\Bill  
      **/
     public function store(array $billInformation)
     {
-        return auth()->user()->bills()->create($billInformation);
+        $bill = auth()->user()->bills()->create($billInformation);
+
+        if (! $category = Category::find($billInformation['category_id'])) {
+            return false;
+        }
+        
+        $bill->categories()->attach($category->id);
+
+        return $bill;
     }
 
     /**
@@ -72,6 +81,12 @@ class BillRepository implements BillRepositoryInterface
      **/
     public function update(Bill $bill, $billInformation)
     {
+        if (! $category = Category::find($billInformation['category_id'])) {
+            return false;
+        }
+        
+        $bill->categories()->attach($category->id);
+
         return $bill->update($billInformation);
     }
 
