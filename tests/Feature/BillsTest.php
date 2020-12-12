@@ -6,7 +6,6 @@ use Tests\TestCase;
 use App\Models\User;
 use App\Models\API\Bills\Bill;
 use Laravel\Passport\Passport;
-use App\Models\API\Bills\Place;
 use App\Models\API\Bills\Category;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Middleware\API\AddTokenToAuthHeader;
@@ -23,7 +22,8 @@ class BillsTest extends TestCase
         Passport::actingAs(User::create([
             'name' => 'laravel',
             'email' => 'laravel@example.com',
-            'password' => Hash::make('123456')
+            'password' => Hash::make('123456'),
+            'timezone' => 'Europe/Lisbon',
         ]));
     }
 
@@ -33,14 +33,12 @@ class BillsTest extends TestCase
 
         Bill::factory()->count(3)
             ->has(Category::factory()->count(3))
-            ->has(Place::factory())
             ->create(['user_id' => 1]);
 
         $bills = $this->getJson('/api/bills')->getData()->data;
 
         $this->assertEquals(3, count($bills));
         $this->assertEquals(3, count($bills[0]->categories));
-        $this->assertEquals(1, count($bills[0]->places));
     }
 
     public function test_it_can_only_get_bills_with_relationships_it_owns()
@@ -51,7 +49,6 @@ class BillsTest extends TestCase
 
         Bill::factory()->count(5)
             ->has(Category::factory()->count(3))
-            ->has(Place::factory())
             ->create();
 
         $bills = $this->get('/api/bills')->getData()->data;
@@ -65,7 +62,6 @@ class BillsTest extends TestCase
 
         Bill::factory()
             ->has(Category::factory()->count(2))
-            ->has(Place::factory())
             ->create(['user_id' => auth()->user()->id]);
 
         $this->getJson('/api/bills/6')
@@ -125,7 +121,6 @@ class BillsTest extends TestCase
 
         Bill::factory()
             ->has(Category::factory())
-            ->has(Place::factory())
             ->create(['user_id' => 1]);
 
         $this->deleteJson('/api/bills/1')
@@ -138,7 +133,6 @@ class BillsTest extends TestCase
 
         Bill::factory()
             ->has(Category::factory())
-            ->has(Place::factory())
             ->create();
 
         $this->deleteJson('/api/bills/1')
@@ -151,7 +145,6 @@ class BillsTest extends TestCase
 
         Bill::factory()
             ->has(Category::factory())
-            ->has(Place::factory())
             ->create(['user_id' => auth()->user()->id]);
 
         $response = $this->putJson('/api/bills/1', [
@@ -176,7 +169,6 @@ class BillsTest extends TestCase
 
         Bill::factory()
             ->has(Category::factory())
-            ->has(Place::factory())
             ->create();
 
         $response = $this->putJson('/api/bills/1', [

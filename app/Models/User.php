@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'timezone',
     ];
 
     /**
@@ -55,6 +56,6 @@ class User extends Authenticatable
 
     public function bills()
     {
-        return $this->hasMany(Bill::class)->with(['categories:id,name,slug', 'places:id,name']);
+        return $this->hasMany(Bill::class);
     }
 }

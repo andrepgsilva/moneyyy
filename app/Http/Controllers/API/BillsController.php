@@ -23,7 +23,7 @@ class BillsController extends Controller
      */
     public function index()
     {
-        return $this->billRepository->index()->paginate(10);
+        return $this->billRepository->index()->paginate(20);
     }
 
     /**
@@ -36,7 +36,7 @@ class BillsController extends Controller
     {
         $formValidated = $request->validate([
             'name' => 'required|max:255',
-            'description' => 'required|max:255',
+            'description' => 'max:255',
             'value' => 'required|integer|gt:0',
             'issue_date' => 'required|date',
         ]);

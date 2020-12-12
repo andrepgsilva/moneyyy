@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Support\Str;
 use App\Models\API\Bills\Bill;
-use App\Models\API\Bills\Place;
 use Illuminate\Database\Seeder;
 use App\Models\API\Bills\Category;
 use Illuminate\Support\Facades\Hash;
@@ -48,17 +47,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
 
-        /* Places */
-        $websitePlace = Place::create([
-            'name' => 'Website',
-        ]);
-
-        $macDonalds = Place::create([
-            'name' => 'MacDonalds',
-        ]);
-
-        /* Bills */
-        
+        /* Bills */        
         $firstBill = Bill::create([
             'user_id' => 1,
             'name' => 'Spotify',
@@ -68,7 +57,6 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $firstBill->categories()->attach($entertainmentCategory->id);
-        $firstBill->places()->attach($websitePlace->id);
 
         $secondBill = Bill::create([
             'user_id' => 1,
@@ -79,7 +67,6 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $secondBill->categories()->attach($foodCategory->id);
-        $secondBill->places()->attach($macDonalds->id);
 
         $thirdBill = Bill::create([
             'user_id' => 1,
@@ -90,6 +77,5 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $thirdBill->categories()->attach($educationCategory->id);
-        $thirdBill->places()->attach($websitePlace->id);
     }
 }

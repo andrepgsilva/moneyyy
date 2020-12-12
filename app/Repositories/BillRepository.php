@@ -27,7 +27,7 @@ class BillRepository implements BillRepositoryInterface
         ];
 
         return $user->bills()
-                ->with(['categories:id,name', 'places:id,name'])
+                ->with(['categories:id,name'])
                 ->latest()
                 ->select(...$billsScope)
                 ->withCasts([
@@ -46,7 +46,7 @@ class BillRepository implements BillRepositoryInterface
     public function show($id)
     {
         $user = auth()->user();
-        $scope = ['categories:id,name,slug', 'places:id,name'];
+        $scope = ['categories:id,name,slug'];
 
         return $user->bills()->with($scope)->where('bills.id', $id)->first();
     }
@@ -88,7 +88,6 @@ class BillRepository implements BillRepositoryInterface
     {
         DB::transaction(function () use ($bill){
             $bill->categories()->detach();
-            $bill->places()->detach();
 
             $bill->delete();
         });

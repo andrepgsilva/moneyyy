@@ -17,8 +17,10 @@ class CreateBillsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->string('name');
-            $table->text('description');
+            $table->text('description')->nullable();
             $table->bigInteger('value');
+            $table->string('place')->nullable();
+            $table->timestamp('issue_date');
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users');
