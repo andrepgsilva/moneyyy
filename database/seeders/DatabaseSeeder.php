@@ -22,7 +22,8 @@ class DatabaseSeeder extends Seeder
         User::create([
             'name' => 'Laravel',
             'email' => 'laravel@example.com',
-            'password' => Hash::make('123456')
+            'password' => Hash::make('123456'),
+            'timezone' => 'Europe/Lisbon',
         ]);
 
         /* Categories */
@@ -63,6 +64,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Spotify',
             'description' => 'I need to listen some music...',
             'value' => 7500,
+            'issue_date' => now(),
         ]);
 
         $firstBill->categories()->attach($entertainmentCategory->id);
@@ -73,6 +75,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Big Mac',
             'description' => 'Mac Donalds Sandwich',
             'value' => 5500,
+            'issue_date' => now(),
         ]);
 
         $secondBill->categories()->attach($foodCategory->id);
@@ -83,6 +86,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Clean Code',
             'description' => 'Tech book',
             'value' => 45000,
+            'issue_date' => now(),
         ]);
 
         $thirdBill->categories()->attach($educationCategory->id);
