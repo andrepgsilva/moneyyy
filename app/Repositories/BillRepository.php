@@ -12,27 +12,25 @@ class BillRepository implements BillRepositoryInterface
     /**
      * Get all bills
      *
-     * @return Illuminate\Database\Eloquent\Collection
+     * @return Illuminate\Database\Eloquent\Builder
      * 
      **/
     public function index()
     {
         $user = auth()->user();
 
-        $billsScope = [
-            'bills.id', 
-            'bills.name', 
-            'bills.description',
-            'bills.value',
-            'bills.created_at',
-        ];
-
         return $user->bills()
                 ->with(['categories:id,name'])
-                ->latest()
-                ->select(...$billsScope)
+                ->select([
+                    'bills.id', 
+                    'bills.name', 
+                    'bills.description',
+                    'bills.value',
+                    'bills.created_at',
+                ])
                 ->withCasts([
-                    'created_at' => 'datetime:d/m/Y H:i'
+                    'created_at' => 'datetime:d/m/Y H:i',
+                    'issue_date' => 'datetime:d/m/Y H:i',
                 ]);
     }
 

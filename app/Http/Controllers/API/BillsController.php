@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use Illuminate\Http\Request;
 use App\Models\API\Bills\Bill;
 use App\Http\Controllers\Controller;
+use App\Scopes\API\FiltersInterface;
 use App\Repositories\Interfaces\BillRepositoryInterface;
 
 class BillsController extends Controller
@@ -21,9 +22,13 @@ class BillsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(FiltersInterface $filtersInterface) 
     {
-        return $this->billRepository->index()->paginate(20);
+        $billsQuery = $this->billRepository->index();
+       
+        $filtersInterface->setScopes($billsQuery, request()->all());
+        
+        return $billsQuery->latest()->paginate(20);
     }
 
     /**

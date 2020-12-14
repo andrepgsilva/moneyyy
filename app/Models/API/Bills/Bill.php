@@ -3,13 +3,14 @@
 namespace App\Models\API\Bills;
 
 use App\Models\User;
+use App\Scopes\API\Bills\Scopes;
 use App\Models\API\Bills\Category;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Bill extends Model
 {
-    use HasFactory;
+    use HasFactory, Scopes;
 
     protected $fillable = [
         'user_id',
