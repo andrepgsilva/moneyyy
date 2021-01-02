@@ -51,7 +51,7 @@ class AuthorizationRequestHandle
         return collect([
             'access_token' => $accessToken, 
             'refresh_token' => $refreshToken, 
-            'email' => $credentials['email']
+            'email' => $credentials['username']
         ]);
     }
 

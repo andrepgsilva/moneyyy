@@ -53,19 +53,21 @@ class AuthController extends Controller
             'device' => 'required|string'
         ]);
 
-        $user = User::where('email', $credentials['email'])->first();
+        if (! $user = User::where('email', $credentials['email'])->first()) {
+            return response()->json(['message' => 'The email doesn\'t belong to an account.'], 401);
+        }
 
-        if (Hash::check($user->password, $credentials['password'])) {
+        if (! Hash::check($user->password, $credentials['password'])) {
             return response()->json(['error' => 'Sorry, your password was incorrect.'], 401);
         }
 
-        $clientTokens = $this->authorizationRequest->addTokensToClient(...$credentials);
+        $clientTokens = $this->authorizationRequest->addTokensToClient($credentials);
 
         if (empty($clientTokens)) {
             return response()->json(['error' => 'Invalid token.'], 401);
         };
 
-        $isNotMobile = $credentials['device'] === 'mobile';
+        $isNotMobile = $credentials['device'] !== 'mobile';
 
         return response()->json($isNotMobile ? $clientTokens->only('email') : $clientTokens);
     }
