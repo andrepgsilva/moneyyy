@@ -50,15 +50,18 @@ class AuthController extends Controller
         $credentials = request()->validate([
             'email' => 'required|email',
             'password' => 'required',
-            'device' => 'required|string'
+            'device' => 'required|string',
+            'lang' => 'required',
         ]);
 
+        $lang = $credentials['lang'];
+
         if (! $user = User::where('email', $credentials['email'])->first()) {
-            return response()->json(['message' => 'The email doesn\'t belong to an account.'], 401);
+            return response()->json(['error' => trans('login.email_does_not_belong', [], $lang)], 401);
         }
 
         if (! Hash::check($user->password, $credentials['password'])) {
-            return response()->json(['error' => 'Sorry, your password was incorrect.'], 401);
+            return response()->json(['error' => trans('login.incorrect_password', [], $lang)], 401);
         }
 
         $clientTokens = $this->authorizationRequest->addTokensToClient($credentials);
