@@ -60,7 +60,7 @@ class AuthController extends Controller
             return response()->json(['error' => trans('login.email_does_not_belong', [], $lang)], 401);
         }
 
-        if (! Hash::check($user->password, $credentials['password'])) {
+        if (! Hash::check($credentials['password'], $user->password)) {
             return response()->json(['error' => trans('login.incorrect_password', [], $lang)], 401);
         }
 
