@@ -32,7 +32,7 @@ class ForgotPassword extends Mailable
         return $this->markdown('emails.password.forgot')
                     ->with([
                         'username' => $this->content['username'],
-                        'confirmationNumber' => $this->content['confirmationNumber'],
+                        'confirmationToken' => $this->content['confirmationToken'],
                     ]);
     }
 }

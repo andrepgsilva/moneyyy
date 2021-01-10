@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\API\ForgotPassword;
 
 use App\Models\User;
 use App\Mail\ForgotPassword;
@@ -26,7 +26,7 @@ class ForgotPasswordController extends Controller
         $userPasswordTokens = $user->passwordTokens;
 
         if ($userPasswordTokens->count() == 1) {
-            $userPasswordTokens->first()->delete();
+            $user->passwordTokens()->delete();
         }
 
         $user->passwordTokens()->create([
@@ -35,7 +35,7 @@ class ForgotPasswordController extends Controller
 
         Mail::to($user)->locale($userLang)->send(new ForgotPassword([
             'username' => $user->name,
-            'confirmationNumber' => $numberForConfirmation,
+            'confirmationToken' => $numberForConfirmation,
         ]));
     }
 }

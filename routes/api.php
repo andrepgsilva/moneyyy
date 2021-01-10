@@ -4,7 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\BillsController;
 use App\Http\Controllers\API\VerifyEmailController;
-use App\Http\Controllers\API\ForgotPasswordController;
+use App\Http\Controllers\API\ForgotPassword\TokenMatchController;
+use App\Http\Controllers\API\ForgotPassword\ForgotPasswordController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,6 +20,7 @@ use App\Http\Controllers\API\ForgotPasswordController;
 
 Route::post('/email-exists', [VerifyEmailController::class, 'index']);
 Route::post('/forgot-password', [ForgotPasswordController::class, 'index']);
+Route::post('/token-match', [TokenMatchController::class, 'index']);
 
 // Authentication routes
 Route::group(['prefix' => 'auth'], function () {

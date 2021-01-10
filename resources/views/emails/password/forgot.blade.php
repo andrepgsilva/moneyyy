@@ -3,7 +3,7 @@
 
 @lang('forgot.hello'), {{ $username }}!
 
-@lang('forgot.here_is_confirmation_code'): {{ $confirmationNumber }}
+@lang('forgot.here_is_confirmation_code'): {{ $confirmationToken }}
 
 @lang('forgot.with_best_regards'),<br>
 {{ config('app.name') }}
