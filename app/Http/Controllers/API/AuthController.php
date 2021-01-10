@@ -23,18 +23,20 @@ class AuthController extends Controller
      */
     public function register()
     {
+        \App::setLocale(request('lang'));
+        
         $credentials = request()->validate([
-            'name' => 'required|max:255',
+            'name' => 'required|max:255|min:2',
             'email' => 'required|email|unique:users',
             'password' => 'required|confirmed|min:6',
-            'timezone' => 'required|max:255',
+            'lang' => 'required|max:255',
         ]);
 
         User::create([
             'name' => $credentials['name'],
             'email' => $credentials['email'],
             'password' => Hash::make($credentials['password']),
-            'timezone' => $credentials['timezone'],
+            'timezone' => $credentials['lang'],
         ]);
 
         return response()->json(['message' => 'User successfully created.'], 201);
@@ -47,6 +49,8 @@ class AuthController extends Controller
      */
     public function login()
     {
+        \App::setLocale(request('lang'));
+
         $credentials = request()->validate([
             'email' => 'required|email',
             'password' => 'required',
