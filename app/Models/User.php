@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\API\Bills\Bill;
+use App\Models\API\Password\PasswordToken;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -46,5 +47,10 @@ class User extends Authenticatable
     public function bills()
     {
         return $this->hasMany(Bill::class);
+    }
+
+    public function passwordTokens()
+    {
+        return $this->hasMany(PasswordToken::class);
     }
 }
