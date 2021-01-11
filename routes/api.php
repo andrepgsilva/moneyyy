@@ -5,6 +5,7 @@ use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\BillsController;
 use App\Http\Controllers\API\VerifyEmailController;
 use App\Http\Controllers\API\ForgotPassword\TokenMatchController;
+use App\Http\Controllers\API\ForgotPassword\ResetPasswordController;
 use App\Http\Controllers\API\ForgotPassword\ForgotPasswordController;
 
 /*
@@ -19,8 +20,11 @@ use App\Http\Controllers\API\ForgotPassword\ForgotPasswordController;
 */
 
 Route::post('/email-exists', [VerifyEmailController::class, 'index']);
+
+// Recover password routes
 Route::post('/forgot-password', [ForgotPasswordController::class, 'index']);
 Route::post('/token-match', [TokenMatchController::class, 'index']);
+Route::put('/reset-password', [ResetPasswordController::class, 'index']);
 
 // Authentication routes
 Route::group(['prefix' => 'auth'], function () {
