@@ -17,4 +17,5 @@ return [
     'with_best_regards' => 'With best regards',
     'password_updated_successfully' => 'Password updated successfully.',
     'something_went_wrong_try_later' => 'Something went wrong. Please, try again later.',
+    'confirmation_code_wrong_or_expired' => 'The confirmation code is wrong or expired.',
 ];

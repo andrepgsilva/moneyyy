@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\ForgotPassword;
 
 use App\Models\User;
+use App\Utils\LocaleHandle;
 use App\Mail\ForgotPassword;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Mail;
@@ -11,13 +12,14 @@ class ForgotPasswordController extends Controller
 {
     public function index()
     {
+        $userLang = LocaleHandle::getUserLang(request());
+
         $validatedAttributes = request()->validate([
             'email' => 'required|email|exists:users',
             'lang' => 'required|string'
         ]);
 
         $userEmail = $validatedAttributes['email'];
-        $userLang = $validatedAttributes['lang'];
 
         $numberForConfirmation = random_int(1000, 9999);
 

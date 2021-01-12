@@ -17,4 +17,5 @@ return [
     'with_best_regards' => 'Com os melhores cumprimentos',
     'password_updated_successfully' => 'Palavra passe atualizada com sucesso.',
     'something_went_wrong_try_later' => 'Algo deu errado. Tente novamente mais tarde.',
+    'confirmation_code_wrong_or_expired' => 'O código de confirmação está errado ou expirou.',
 ];

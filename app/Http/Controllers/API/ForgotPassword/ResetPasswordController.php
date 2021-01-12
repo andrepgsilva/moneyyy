@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\ForgotPassword;
 
 use App\Models\User;
+use App\Utils\LocaleHandle;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 
@@ -10,7 +11,7 @@ class ResetPasswordController extends Controller
 {
     public function index()
     {
-        \App::setLocale(request('lang'));
+        LocaleHandle::getUserLang(request());
 
         $validatedAttributes = request()->validate([
             'email' => 'required|email',
