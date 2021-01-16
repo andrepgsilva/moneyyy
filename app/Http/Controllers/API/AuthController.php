@@ -24,7 +24,7 @@ class AuthController extends Controller
     public function register()
     {
         \App::setLocale(request('lang'));
-        
+
         $credentials = request()->validate([
             'name' => 'required|max:255|min:2',
             'email' => 'required|email|unique:users',
@@ -61,11 +61,11 @@ class AuthController extends Controller
         $lang = $credentials['lang'];
 
         if (! $user = User::where('email', $credentials['email'])->first()) {
-            return response()->json(['error' => trans('login.email_does_not_belong', [], $lang)], 401);
+            return response()->json(['error' => trans('login.email_does_not_belong', [], $lang)], 403);
         }
 
         if (! Hash::check($credentials['password'], $user->password)) {
-            return response()->json(['error' => trans('login.incorrect_password', [], $lang)], 401);
+            return response()->json(['error' => trans('login.incorrect_password', [], $lang)], 403);
         }
 
         $clientTokens = $this->authorizationRequest->addTokensToClient($credentials);
@@ -102,11 +102,21 @@ class AuthController extends Controller
      */
     public function refreshToken()
     {
-        if (! $this->authorizationRequest->refreshToken()) {
+        $responseMessage = ['message' => 'Token refreshed successfully.'];
+    
+        $responseTokens = $this->authorizationRequest->refreshToken();
+        
+        if (! $responseTokens) {
             return response()->json(['error' => 'Refresh token is expired'], 401);
         }
 
-        return response()->json(['message' => 'Token refreshed successfully.']);
+        if (request()->has('device')) {
+            if (request('device') == 'mobile') {
+                $responseMessage = $responseTokens->toArray();
+            }
+        }
+
+        return response()->json($responseMessage);
     }
 
     public function me()

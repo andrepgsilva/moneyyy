@@ -10,8 +10,8 @@ class AuthorizationRequestHandle
     protected function defaultFormFields()
     {
         return [
-            'client_id' => config('app.passport_client_id'),
-            'client_secret' => config('app.passport_client_secret'),
+            'client_id' => (string) config('app.passport_client_id'),
+            'client_secret' => (string) config('app.passport_client_secret'),
             'scope' => '*',
             'device' => 'web',
         ];
@@ -32,8 +32,9 @@ class AuthorizationRequestHandle
 
         $credentials['username'] = $credentials['email'];
         unset($credentials['email']);
-
+        
         $requestForm = array_merge($defaultForm, $credentials);
+        
         $tokenRequest = Request::create(config('url') . '/oauth/token', 'post', $requestForm);
         
         $responseBody = json_decode(app()->handle($tokenRequest)->getContent());
@@ -50,18 +51,31 @@ class AuthorizationRequestHandle
 
         return collect([
             'access_token' => $accessToken, 
-            'refresh_token' => $refreshToken, 
+            'refresh_token' => $refreshToken,
             'email' => $credentials['username']
         ]);
     }
 
     public function refreshToken()
     {
-        if (! $refreshToken = request()->cookie('refresh_token')) {
-            return false;
+        $refreshToken = request()->cookie('refresh_token');
+        $device = 'web';
+        $email = '';
+
+        if (request()->has('device')) {
+            if (request('device') == 'mobile') {
+                $device = 'mobile';
+                $refreshToken = request('refresh_token');
+                $email = request('email');
+            }
         }
 
+        if (! $refreshToken) return false;
+
+        
         $paramsToRequestRefresh = [
+            'email' => $email,
+            'device' => $device,
             'grant_type' => 'refresh_token',
             'refresh_token' => $refreshToken,
         ];

@@ -28,7 +28,7 @@ class BillsController extends Controller
        
         $filtersInterface->setScopes($billsQuery, request()->all());
         
-        return $billsQuery->latest()->paginate(20);
+        return $billsQuery->latest('issue_date')->paginate(30);
     }
 
     /**

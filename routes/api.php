@@ -44,3 +44,12 @@ Route::group(['middleware' => 'auth.api'], function() {
     Route::delete('/bills/{id}', [BillsController::class, 'destroy']);
     Route::put('/bills/{id}', [BillsController::class, 'update']);
 });
+
+// Bills routes for mobile
+Route::group(['middleware' => 'auth:api'], function() {
+    Route::get('mobile/bills', [BillsController::class, 'index']);
+    Route::post('mobile/bills', [BillsController::class, 'store']);
+    Route::get('mobile/bills/{id}', [BillsController::class, 'show']);
+    Route::delete('mobile/bills/{id}', [BillsController::class, 'destroy']);
+    Route::put('mobile/bills/{id}', [BillsController::class, 'update']);
+});
