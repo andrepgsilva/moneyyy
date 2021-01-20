@@ -14,7 +14,7 @@ class BillsController extends Controller
 
     public function __construct(BillRepositoryInterface $billRepository)
     {
-        $this->billRepository = $billRepository; 
+        $this->billRepository = $billRepository;
     }
 
     /**
@@ -22,12 +22,12 @@ class BillsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(FiltersInterface $filtersInterface) 
+    public function index(FiltersInterface $filtersInterface)
     {
         $billsQuery = $this->billRepository->index();
-       
+
         $filtersInterface->setScopes($billsQuery, request()->all());
-        
+
         return $billsQuery->latest('issue_date')->paginate(30);
     }
 
@@ -46,8 +46,8 @@ class BillsController extends Controller
             'issue_date' => 'required|date',
             'category_id' => 'required|integer',
         ]);
-        
-        if (! $this->billRepository->store($formValidated)) {
+
+        if (!$this->billRepository->store($formValidated)) {
             return response()->json(['error' => 'Internal Server Error'], 500);
         }
 
@@ -91,9 +91,9 @@ class BillsController extends Controller
         $this->authorize('view', $bill);
 
         /**
-        * @var Bill $bill 
-        */
-        if (! $this->billRepository->update($bill, $formValidated)) {
+         * @var Bill $bill 
+         */
+        if (!$this->billRepository->update($bill, $formValidated)) {
             return response()->json(['error' => 'Internal Server Error'], 500);
         }
 
@@ -114,10 +114,10 @@ class BillsController extends Controller
 
         try {
             /**
-            * @var Bill $bill 
-            */
+             * @var Bill $bill 
+             */
             $this->billRepository->destroy($bill);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return response()->json(['error' => 'Internal Server Error'], 500);
         }
 

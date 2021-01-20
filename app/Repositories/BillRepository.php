@@ -20,18 +20,19 @@ class BillRepository implements BillRepositoryInterface
         $user = auth()->user();
 
         return $user->bills()
-                ->with(['categories:id,name'])
-                ->select([
-                    'bills.id', 
-                    'bills.name', 
-                    'bills.description',
-                    'bills.value',
-                    'bills.created_at',
-                ])
-                ->withCasts([
-                    'created_at' => 'datetime:d/m/Y H:i',
-                    'issue_date' => 'datetime:d/m/Y H:i',
-                ]);
+            ->with(['categories:id,name'])
+            ->select([
+                'bills.id',
+                'bills.name',
+                'bills.description',
+                'bills.value',
+                'bills.created_at',
+                'bills.issue_date',
+            ])
+            ->withCasts([
+                'created_at' => 'datetime:d/m/Y H:i',
+                // 'issue_date' => 'datetime:d/m/Y H:i',
+            ]);
     }
 
     /**
@@ -61,10 +62,10 @@ class BillRepository implements BillRepositoryInterface
     {
         $bill = auth()->user()->bills()->create($billInformation);
 
-        if (! $category = Category::find($billInformation['category_id'])) {
+        if (!$category = Category::find($billInformation['category_id'])) {
             return false;
         }
-        
+
         $bill->categories()->attach($category->id);
 
         return $bill;
@@ -79,10 +80,10 @@ class BillRepository implements BillRepositoryInterface
      **/
     public function update(Bill $bill, $billInformation)
     {
-        if (! $category = Category::find($billInformation['category_id'])) {
+        if (!$category = Category::find($billInformation['category_id'])) {
             return false;
         }
-        
+
         $bill->categories()->attach($category->id);
 
         return $bill->update($billInformation);
@@ -99,7 +100,7 @@ class BillRepository implements BillRepositoryInterface
      **/
     public function destroy(Bill $bill)
     {
-        DB::transaction(function () use ($bill){
+        DB::transaction(function () use ($bill) {
             $bill->categories()->detach();
 
             $bill->delete();

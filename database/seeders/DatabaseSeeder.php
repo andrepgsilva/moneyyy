@@ -52,7 +52,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
 
-        /* Bills */        
+        /* Bills */
         $firstBill = Bill::create([
             'user_id' => 1,
             'name' => 'Spotify',
@@ -83,5 +83,51 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $thirdBill->categories()->attach($educationCategory->id);
+
+        $fourthBill = Bill::create([
+            'user_id' => 1,
+            'name' => 'Clean Architecture',
+            'description' => 'Tech book',
+            'value' => 60000,
+            'place' => 'Bertrand',
+            'issue_date' => now()->addDays(4),
+        ]);
+
+        $fourthBill->categories()->attach($educationCategory->id);
+
+        $fifthBill = Bill::create([
+            'user_id' => 1,
+            'name' => 'Trofa Hospital',
+            'description' => 'A skin dicease.',
+            'value' => 80000,
+            'place' => 'Trofa Hospital',
+            'issue_date' => now()->addDays(4),
+        ]);
+
+        $fifthBill->categories()->attach($healthCategory->id);
+
+        $sixthBill = Bill::create([
+            'user_id' => 1,
+            'name' => 'Life University',
+            'description' => 'A design course.',
+            'value' => 100000,
+            'place' => 'Life University',
+            'issue_date' => now()->addDays(4),
+        ]);
+
+        $sixthBill->categories()->attach($educationCategory->id);
+
+        $seventhBill = Bill::create([
+            'user_id' => 1,
+            'name' => 'Nintendo eShop',
+            'description' => 'A design course.',
+            'value' => 70000,
+            'place' => 'Nintendo eShop',
+            'issue_date' => now()->addDays(4),
+        ]);
+
+        $seventhBill->categories()->attach($entertainmentCategory->id);
+
+        //Bill::factory()->count(100)->has(Category::factory(['name' => 'Food'])->count(1))->create(['user_id' => 1]);
     }
 }
